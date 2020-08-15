@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+<!--  开启注解扫描  -->
+<context:component-scan base-package="com.shop.controller"></context:component-scan>
+
+  <!--配置MVC的注解驱动-->
+  <!--把配置好的日期转换器挂在这里-->
+<mvc:annotation-driven conversion-service="conversionService"></mvc:annotation-driven>
+
+<!--配置内部资源视图解析器  -->
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <property name="prefix" value="/WEB-INF/jsp/"></property>
+  <property name="suffix" value=".jsp"></property>
+</bean>
+
+  <!--配置自定义转换器-->
+  <bean name="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+    <property name="converters">
+      <set>
+        <bean class="com.shop.converter.DateConverter"></bean>
+      </set>
+    </property>
+  </bean>
+
+  <!--开放访问静态资源-->
+  <mvc:default-servlet-handler/>
+  <!--<mvc:resources mapping="/js/**" location="/js/"></mvc:resources>-->
+
+  <!--配置全局异常-->
+  <bean class="com.shop.exception.MySpringMVCException"></bean>
+
+  <!--配置拦截器-->
+  <mvc:interceptors>
+    <mvc:interceptor>
+      <mvc:mapping path="/**"/>
+      <bean class="com.shop.interceptor.LoginHandlerInterceptor"></bean>
+    </mvc:interceptor>
+  </mvc:interceptors>
+
+  <!--
+  配置文件上传
+  必须配置id/name属性，属性名必须为multipartResolver，否则会报空指针异常
+  因为SpringMVC已经把这个属性封装成常量取名为multipartResolver，所以必须为这个属性名
+  -->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!--最大文件大小，-1为无限止(-1)-->
+    <property name="maxUploadSize" value="-1"></property>
+  </bean>
+</beans>    
