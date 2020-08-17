@@ -60,7 +60,7 @@ public class ProductController {
         //获取到最原始的文件名称
         String filename = pictureFile.getOriginalFilename();
 
-        //将原始的文件名称
+        //将原始的文件名称设置成唯一文件名
         String newFilename = UUID.randomUUID().toString()+filename.substring(filename.lastIndexOf("."));
 
         //上传
